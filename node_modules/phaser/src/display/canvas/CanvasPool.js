@@ -14,12 +14,12 @@ var pool = [];
 var _disableContextSmoothing = false;
 
 /**
- * The CanvasPool is a global static object, that allows Phaser to recycle and pool Canvas DOM elements.
+ * The CanvasPool is a global static object, that allows Phaser to recycle and pool 2D Context Canvas DOM elements.
+ * It does not pool WebGL Contexts, because once the context options are set they cannot be modified again, 
+ * which is useless for some of the Phaser pipelines / renderer.
  *
- * This singleton is instantiated as soon as Phaser loads,
- * before a Phaser.Game instance has even been created.
- * Which means all instances of Phaser Games on the same page
- * can share the one single pool
+ * This singleton is instantiated as soon as Phaser loads, before a Phaser.Game instance has even been created.
+ * Which means all instances of Phaser Games on the same page can share the one single pool.
  *
  * @namespace Phaser.Display.Canvas.CanvasPool
  * @since 3.0.0
@@ -36,14 +36,16 @@ var CanvasPool = function ()
      * @param {integer} [width=1] - The width of the Canvas.
      * @param {integer} [height=1] - The height of the Canvas.
      * @param {integer} [canvasType=Phaser.CANVAS] - The type of the Canvas. Either `Phaser.CANVAS` or `Phaser.WEBGL`.
+     * @param {boolean} [selfParent=false] - Use the generated Canvas element as the parent?
      *
      * @return {HTMLCanvasElement} [description]
      */
-    var create = function (parent, width, height, canvasType)
+    var create = function (parent, width, height, canvasType, selfParent)
     {
         if (width === undefined) { width = 1; }
         if (height === undefined) { height = 1; }
         if (canvasType === undefined) { canvasType = CONST.CANVAS; }
+        if (selfParent === undefined) { selfParent = false; }
 
         var canvas;
         var container = first(canvasType);
@@ -56,7 +58,10 @@ var CanvasPool = function ()
                 type: canvasType
             };
 
-            pool.push(container);
+            if (canvasType === CONST.CANVAS)
+            {
+                pool.push(container);
+            }
 
             canvas = container.canvas;
         }
@@ -65,6 +70,11 @@ var CanvasPool = function ()
             container.parent = parent;
 
             canvas = container.canvas;
+        }
+
+        if (selfParent)
+        {
+            container.parent = canvas;
         }
 
         canvas.width = width;
@@ -126,13 +136,20 @@ var CanvasPool = function ()
     {
         if (canvasType === undefined) { canvasType = CONST.CANVAS; }
 
-        pool.forEach(function (container)
+        if (canvasType === CONST.WEBGL)
         {
+            return null;
+        }
+
+        for (var i = 0; i < pool.length; i++)
+        {
+            var container = pool[i];
+
             if (!container.parent && container.type === canvasType)
             {
                 return container;
             }
-        });
+        }
 
         return null;
     };
@@ -155,7 +172,6 @@ var CanvasPool = function ()
         {
             if ((isCanvas && container.canvas === parent) || (!isCanvas && container.parent === parent))
             {
-                // console.log('CanvasPool.remove found and removed');
                 container.parent = null;
                 container.canvas.width = 1;
                 container.canvas.height = 1;

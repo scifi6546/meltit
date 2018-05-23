@@ -6,7 +6,7 @@
 
 var Class = require('../utils/Class');
 var DataManager = require('./DataManager');
-var PluginManager = require('../boot/PluginManager');
+var PluginCache = require('../plugins/PluginCache');
 
 /**
  * @classdesc
@@ -30,6 +30,8 @@ var DataManagerPlugin = new Class({
 
     function DataManagerPlugin (scene)
     {
+        DataManager.call(this, scene, scene.sys.events);
+
         /**
          * [description]
          *
@@ -48,55 +50,71 @@ var DataManagerPlugin = new Class({
          */
         this.systems = scene.sys;
 
-        if (!scene.sys.settings.isBooted)
-        {
-            scene.sys.events.once('boot', this.boot, this);
-        }
-
-        DataManager.call(this, this.scene, scene.sys.events);
+        scene.sys.events.once('boot', this.boot, this);
+        scene.sys.events.on('start', this.start, this);
     },
 
     /**
-     * [description]
+     * This method is called automatically, only once, when the Scene is first created.
+     * Do not invoke it directly.
      *
      * @method Phaser.Data.DataManagerPlugin#boot
-     * @since 3.0.0
+     * @private
+     * @since 3.5.1
      */
     boot: function ()
     {
-        var eventEmitter = this.systems.events;
+        this.events = this.systems.events;
 
-        eventEmitter.on('shutdown', this.shutdownPlugin, this);
-        eventEmitter.on('destroy', this.destroyPlugin, this);
+        this.events.once('destroy', this.destroy, this);
     },
 
     /**
-     * [description]
+     * This method is called automatically by the Scene when it is starting up.
+     * It is responsible for creating local systems, properties and listening for Scene events.
+     * Do not invoke it directly.
      *
-     * @method Phaser.Data.DataManagerPlugin#shutdownPlugin
-     * @since 3.0.0
+     * @method Phaser.Data.DataManagerPlugin#start
+     * @private
+     * @since 3.5.0
      */
-    shutdownPlugin: function ()
+    start: function ()
     {
-        //  Should we reset the events?
+        this.events.once('shutdown', this.shutdown, this);
     },
 
     /**
-     * [description]
+     * The Scene that owns this plugin is shutting down.
+     * We need to kill and reset all internal properties as well as stop listening to Scene events.
      *
-     * @method Phaser.Data.DataManagerPlugin#destroyPlugin
-     * @since 3.0.0
+     * @method Phaser.Data.DataManagerPlugin#shutdown
+     * @private
+     * @since 3.5.0
      */
-    destroyPlugin: function ()
+    shutdown: function ()
     {
-        this.destroy();
+        this.systems.events.off('shutdown', this.shutdown, this);
+    },
 
-        this.scene = undefined;
-        this.systems = undefined;
+    /**
+     * The Scene that owns this plugin is being destroyed.
+     * We need to shutdown and then kill off all external references.
+     *
+     * @method Phaser.Data.DataManagerPlugin#destroy
+     * @since 3.5.0
+     */
+    destroy: function ()
+    {
+        DataManager.prototype.destroy.call(this);
+
+        this.events.off('start', this.start, this);
+
+        this.scene = null;
+        this.systems = null;
     }
 
 });
 
-PluginManager.register('DataManagerPlugin', DataManagerPlugin, 'data');
+PluginCache.register('DataManagerPlugin', DataManagerPlugin, 'data');
 
 module.exports = DataManagerPlugin;

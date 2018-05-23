@@ -5,7 +5,7 @@
  */
 
 var GetTilesWithin = require('./GetTilesWithin');
-var GetRandomElement = require('../../utils/array/GetRandomElement');
+var GetRandom = require('../../utils/array/GetRandom');
 
 /**
  * Randomizes the indexes of a rectangular region of tiles (in tile coordinates) within the
@@ -15,6 +15,7 @@ var GetRandomElement = require('../../utils/array/GetRandomElement');
  * indexes. This method only modifies tile indexes and does not change collision information.
  *
  * @function Phaser.Tilemaps.Components.Randomize
+ * @private
  * @since 3.0.0
  *
  * @param {integer} [tileX=0] - [description]
@@ -44,7 +45,7 @@ var Randomize = function (tileX, tileY, width, height, indexes, layer)
 
     for (i = 0; i < tiles.length; i++)
     {
-        tiles[i].index = GetRandomElement(indexes);
+        tiles[i].index = GetRandom(indexes);
     }
 };
 

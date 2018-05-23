@@ -63,11 +63,11 @@ var Factory = new Class({
      * @method Phaser.Physics.Arcade.Factory#collider
      * @since 3.0.0
      *
-     * @param {Phaser.Physics.Arcade.Body} object1 - The first object to check for collision.
-     * @param {Phaser.Physics.Arcade.Body} object2 - The second object to check for collision.
-     * @param {ArcadePhysicsCallback} collideCallback - The callback to invoke when the two objects collide.
-     * @param {ArcadePhysicsCallback} processCallback - The callback to invoke when the two objects collide. Must return a boolean.
-     * @param {*} callbackContext - The scope in which to call the callbacks.
+     * @param {(Phaser.GameObjects.GameObject|Phaser.GameObjects.GameObject[])} object1 - The first object to check for collision.
+     * @param {(Phaser.GameObjects.GameObject|Phaser.GameObjects.GameObject[])} object2 - The second object to check for collision.
+     * @param {ArcadePhysicsCallback} [collideCallback] - The callback to invoke when the two objects collide.
+     * @param {ArcadePhysicsCallback} [processCallback] - The callback to invoke when the two objects collide. Must return a boolean.
+     * @param {*} [callbackContext] - The scope in which to call the callbacks.
      *
      * @return {Phaser.Physics.Arcade.Collider} The Collider that was created.
      */
@@ -82,11 +82,11 @@ var Factory = new Class({
      * @method Phaser.Physics.Arcade.Factory#overlap
      * @since 3.0.0
      *
-     * @param {Phaser.Physics.Arcade.Body} object1 - The first object to check for overlap.
-     * @param {Phaser.Physics.Arcade.Body} object2 - The second object to check for overlap.
-     * @param {ArcadePhysicsCallback} collideCallback - The callback to invoke when the two objects collide.
-     * @param {ArcadePhysicsCallback} processCallback - The callback to invoke when the two objects collide. Must return a boolean.
-     * @param {*} callbackContext - The scope in which to call the callbacks.
+     * @param {(Phaser.GameObjects.GameObject|Phaser.GameObjects.GameObject[])} object1 - The first object to check for overlap.
+     * @param {(Phaser.GameObjects.GameObject|Phaser.GameObjects.GameObject[])} object2 - The second object to check for overlap.
+     * @param {ArcadePhysicsCallback} [collideCallback] - The callback to invoke when the two objects collide.
+     * @param {ArcadePhysicsCallback} [processCallback] - The callback to invoke when the two objects collide. Must return a boolean.
+     * @param {*} [callbackContext] - The scope in which to call the callbacks.
      *
      * @return {Phaser.Physics.Arcade.Collider} The Collider that was created.
      */
@@ -245,6 +245,19 @@ var Factory = new Class({
     group: function (children, config)
     {
         return this.sys.updateList.add(new PhysicsGroup(this.world, this.world.scene, children, config));
+    },
+
+    /**
+     * Destroys this Factory.
+     *
+     * @method Phaser.Physics.Arcade.Factory#destroy
+     * @since 3.5.0
+     */
+    destroy: function ()
+    {
+        this.world = null;
+        this.scene = null;
+        this.sys = null;
     }
 
 });

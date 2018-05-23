@@ -8,7 +8,7 @@ var Class = require('../../utils/Class');
 
 /**
  * @classdesc
- * [description]
+ * Defines a Point in 2D space, with an x and y component.
  *
  * @class Point
  * @memberOf Phaser.Geom
@@ -16,7 +16,7 @@ var Class = require('../../utils/Class');
  * @since 3.0.0
  *
  * @param {number} [x=0] - The x coordinate of this Point.
- * @param {number} [y=0] - The y coordinate of this Point.
+ * @param {number} [y=x] - The y coordinate of this Point.
  */
 var Point = new Class({
 
@@ -49,13 +49,13 @@ var Point = new Class({
     },
 
     /**
-     * [description]
+     * Set the x and y coordinates of the point to the given values.
      *
      * @method Phaser.Geom.Point#setTo
      * @since 3.0.0
      *
      * @param {number} [x=0] - The x coordinate of this Point.
-     * @param {number} [y=0] - The y coordinate of this Point.
+     * @param {number} [y=x] - The y coordinate of this Point.
      *
      * @return {Phaser.Geom.Point} This Point object.
      */

@@ -10,10 +10,9 @@
  * They are then referenced by internal game systems and are available for you to access
  * via `this.sys.game.device.os` from within any Scene.
  * 
- * @name Phaser.Device.OS
+ * @typedef {object} Phaser.Device.OS
  * @since 3.0.0
- *
- * @type {object}
+ * 
  * @property {boolean} android - Is running on android?
  * @property {boolean} chromeOS - Is running on chromeOS?
  * @property {boolean} cocoonJS - Is the game running under CocoonJS?
@@ -135,7 +134,7 @@ function init ()
         OS.cordova = true;
     }
     
-    if ((typeof process !== 'undefined') && (typeof process.versions.node !== 'undefined'))
+    if (process && process.versions && process.versions.node)
     {
         OS.node = true;
     }

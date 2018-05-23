@@ -10,7 +10,7 @@ var Class = require('../utils/Class');
 /**
  * @classdesc
  * The Cache Manager is the global cache owned and maintained by the Game instance.
- * 
+ *
  * Various systems, such as the file Loader, rely on this cache in order to store the files
  * it has loaded. The manager itself doesn't store any files, but instead owns multiple BaseCache
  * instances, one per type of file. You can also add your own custom caches.
@@ -43,7 +43,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#binary
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.binary = new BaseCache();
@@ -54,7 +53,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#bitmapFont
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.bitmapFont = new BaseCache();
@@ -64,7 +62,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#json
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.json = new BaseCache();
@@ -74,7 +71,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#physics
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.physics = new BaseCache();
@@ -84,7 +80,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#shader
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.shader = new BaseCache();
@@ -94,7 +89,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#audio
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.audio = new BaseCache();
@@ -104,7 +98,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#text
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.text = new BaseCache();
@@ -114,7 +107,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#obj
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.obj = new BaseCache();
@@ -125,7 +117,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#tilemap
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.tilemap = new BaseCache();
@@ -135,7 +126,6 @@ var CacheManager = new Class({
          *
          * @name Phaser.Cache.CacheManager#xml
          * @type {Phaser.Cache.BaseCache}
-         * @protected
          * @since 3.0.0
          */
         this.xml = new BaseCache();
@@ -145,8 +135,7 @@ var CacheManager = new Class({
          * Add to this via the `addCustom` method.
          *
          * @name Phaser.Cache.CacheManager#custom
-         * @type {object.<Phaser.Cache.BaseCache>}
-         * @protected
+         * @type {Object.<Phaser.Cache.BaseCache>}
          * @since 3.0.0
          */
         this.custom = {};

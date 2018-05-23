@@ -6,7 +6,7 @@
 
 var Class = require('../utils/Class');
 var List = require('../structs/List');
-var PluginManager = require('../boot/PluginManager');
+var PluginCache = require('../plugins/PluginCache');
 var StableSort = require('../utils/array/StableSort');
 
 /**
@@ -14,7 +14,7 @@ var StableSort = require('../utils/array/StableSort');
  * [description]
  *
  * @class DisplayList
- * @extends Phaser.Structs.List
+ * @extends Phaser.Structs.List.<Phaser.GameObjects.GameObject>
  * @memberOf Phaser.GameObjects
  * @constructor
  * @since 3.0.0
@@ -59,24 +59,35 @@ var DisplayList = new Class({
          */
         this.systems = scene.sys;
 
-        if (!scene.sys.settings.isBooted)
-        {
-            scene.sys.events.once('boot', this.boot, this);
-        }
+        scene.sys.events.once('boot', this.boot, this);
+        scene.sys.events.on('start', this.start, this);
     },
 
     /**
-     * [description]
+     * This method is called automatically, only once, when the Scene is first created.
+     * Do not invoke it directly.
      *
      * @method Phaser.GameObjects.DisplayList#boot
-     * @since 3.0.0
+     * @private
+     * @since 3.5.1
      */
     boot: function ()
     {
-        var eventEmitter = this.systems.events;
+        this.systems.events.once('destroy', this.destroy, this);
+    },
 
-        eventEmitter.on('shutdown', this.shutdown, this);
-        eventEmitter.on('destroy', this.destroy, this);
+    /**
+     * This method is called automatically by the Scene when it is starting up.
+     * It is responsible for creating local systems, properties and listening for Scene events.
+     * Do not invoke it directly.
+     *
+     * @method Phaser.GameObjects.DisplayList#start
+     * @private
+     * @since 3.5.0
+     */
+    start: function ()
+    {
+        this.systems.events.once('shutdown', this.shutdown, this);
     },
 
     /**
@@ -157,10 +168,43 @@ var DisplayList = new Class({
         this.sortGameObjects(gameObjects);
 
         return gameObjects[gameObjects.length - 1];
+    },
+
+    /**
+     * The Scene that owns this plugin is shutting down.
+     * We need to kill and reset all internal properties as well as stop listening to Scene events.
+     *
+     * @method Phaser.GameObjects.DisplayList#shutdown
+     * @private
+     * @since 3.0.0
+     */
+    shutdown: function ()
+    {
+        this.removeAll();
+
+        this.systems.events.off('shutdown', this.shutdown, this);
+    },
+
+    /**
+     * The Scene that owns this plugin is being destroyed.
+     * We need to shutdown and then kill off all external references.
+     *
+     * @method Phaser.GameObjects.DisplayList#destroy
+     * @private
+     * @since 3.0.0
+     */
+    destroy: function ()
+    {
+        this.shutdown();
+
+        this.scene.sys.events.off('start', this.start, this);
+
+        this.scene = null;
+        this.systems = null;
     }
 
 });
 
-PluginManager.register('DisplayList', DisplayList, 'displayList');
+PluginCache.register('DisplayList', DisplayList, 'displayList');
 
 module.exports = DisplayList;

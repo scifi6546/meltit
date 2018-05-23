@@ -5,7 +5,7 @@
  */
 
 var Class = require('../utils/Class');
-var PluginManager = require('../boot/PluginManager');
+var PluginCache = require('../plugins/PluginCache');
 
 /**
  * @classdesc
@@ -49,11 +49,6 @@ var GameObjectCreator = new Class({
          */
         this.systems = scene.sys;
 
-        if (!scene.sys.settings.isBooted)
-        {
-            scene.sys.events.once('boot', this.boot, this);
-        }
-
         /**
          * A reference to the Scene Display List.
          *
@@ -73,45 +68,70 @@ var GameObjectCreator = new Class({
          * @since 3.0.0
          */
         this.updateList;
+
+        scene.sys.events.once('boot', this.boot, this);
+        scene.sys.events.on('start', this.start, this);
     },
 
     /**
-     * Boots the plugin.
+     * This method is called automatically, only once, when the Scene is first created.
+     * Do not invoke it directly.
      *
      * @method Phaser.GameObjects.GameObjectCreator#boot
      * @private
-     * @since 3.0.0
+     * @since 3.5.1
      */
     boot: function ()
     {
         this.displayList = this.systems.displayList;
         this.updateList = this.systems.updateList;
 
-        var eventEmitter = this.systems.events;
-
-        eventEmitter.on('shutdown', this.shutdown, this);
-        eventEmitter.on('destroy', this.destroy, this);
+        this.systems.events.once('destroy', this.destroy, this);
     },
 
     /**
-     * Shuts this plugin down.
+     * This method is called automatically by the Scene when it is starting up.
+     * It is responsible for creating local systems, properties and listening for Scene events.
+     * Do not invoke it directly.
+     *
+     * @method Phaser.GameObjects.GameObjectCreator#start
+     * @private
+     * @since 3.5.0
+     */
+    start: function ()
+    {
+        this.systems.events.once('shutdown', this.shutdown, this);
+    },
+
+    /**
+     * The Scene that owns this plugin is shutting down.
+     * We need to kill and reset all internal properties as well as stop listening to Scene events.
      *
      * @method Phaser.GameObjects.GameObjectCreator#shutdown
+     * @private
      * @since 3.0.0
      */
     shutdown: function ()
     {
+        this.systems.events.off('shutdown', this.shutdown, this);
     },
 
     /**
-     * Destroys this plugin.
+     * The Scene that owns this plugin is being destroyed.
+     * We need to shutdown and then kill off all external references.
      *
      * @method Phaser.GameObjects.GameObjectCreator#destroy
+     * @private
      * @since 3.0.0
      */
     destroy: function ()
     {
+        this.shutdown();
+
+        this.scene.sys.events.off('start', this.start, this);
+
         this.scene = null;
+        this.systems = null;
         this.displayList = null;
         this.updateList = null;
     }
@@ -128,6 +148,6 @@ GameObjectCreator.register = function (factoryType, factoryFunction)
     }
 };
 
-PluginManager.register('GameObjectCreator', GameObjectCreator, 'make');
+PluginCache.register('GameObjectCreator', GameObjectCreator, 'make');
 
 module.exports = GameObjectCreator;

@@ -5,7 +5,7 @@
  */
 
 var Class = require('../utils/Class');
-var PluginManager = require('../boot/PluginManager');
+var PluginCache = require('../plugins/PluginCache');
 
 /**
  * @classdesc
@@ -42,11 +42,6 @@ var UpdateList = new Class({
          */
         this.systems = scene.sys;
 
-        if (!scene.sys.settings.isBooted)
-        {
-            scene.sys.events.once('boot', this.boot, this);
-        }
-
         /**
          * [description]
          *
@@ -79,22 +74,40 @@ var UpdateList = new Class({
          * @since 3.0.0
          */
         this._pendingRemoval = [];
+
+        scene.sys.events.once('boot', this.boot, this);
+        scene.sys.events.on('start', this.start, this);
     },
 
     /**
-     * [description]
+     * This method is called automatically, only once, when the Scene is first created.
+     * Do not invoke it directly.
      *
      * @method Phaser.GameObjects.UpdateList#boot
-     * @since 3.0.0
+     * @private
+     * @since 3.5.1
      */
     boot: function ()
+    {
+        this.systems.events.once('destroy', this.destroy, this);
+    },
+
+    /**
+     * This method is called automatically by the Scene when it is starting up.
+     * It is responsible for creating local systems, properties and listening for Scene events.
+     * Do not invoke it directly.
+     *
+     * @method Phaser.GameObjects.UpdateList#start
+     * @private
+     * @since 3.5.0
+     */
+    start: function ()
     {
         var eventEmitter = this.systems.events;
 
         eventEmitter.on('preupdate', this.preUpdate, this);
         eventEmitter.on('update', this.update, this);
-        eventEmitter.on('shutdown', this.shutdown, this);
-        eventEmitter.on('destroy', this.destroy, this);
+        eventEmitter.once('shutdown', this.shutdown, this);
     },
 
     /**
@@ -228,7 +241,8 @@ var UpdateList = new Class({
     },
 
     /**
-     * [description]
+     * The Scene that owns this plugin is shutting down.
+     * We need to kill and reset all internal properties as well as stop listening to Scene events.
      *
      * @method Phaser.GameObjects.UpdateList#shutdown
      * @since 3.0.0
@@ -240,10 +254,17 @@ var UpdateList = new Class({
         this._list.length = 0;
         this._pendingRemoval.length = 0;
         this._pendingInsertion.length = 0;
+
+        var eventEmitter = this.systems.events;
+
+        eventEmitter.off('preupdate', this.preUpdate, this);
+        eventEmitter.off('update', this.update, this);
+        eventEmitter.off('shutdown', this.shutdown, this);
     },
 
     /**
-     * [description]
+     * The Scene that owns this plugin is being destroyed.
+     * We need to shutdown and then kill off all external references.
      *
      * @method Phaser.GameObjects.UpdateList#destroy
      * @since 3.0.0
@@ -252,13 +273,14 @@ var UpdateList = new Class({
     {
         this.shutdown();
 
-        this.scene = undefined;
-        this.systems = undefined;
+        this.scene.sys.events.off('start', this.start, this);
 
+        this.scene = null;
+        this.systems = null;
     }
 
 });
 
-PluginManager.register('UpdateList', UpdateList, 'updateList');
+PluginCache.register('UpdateList', UpdateList, 'updateList');
 
 module.exports = UpdateList;

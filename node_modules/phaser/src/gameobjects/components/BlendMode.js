@@ -16,6 +16,15 @@ var BlendModes = require('../../renderer/BlendModes');
 
 var BlendMode = {
 
+    /**
+     * Private internal value. Holds the current blend mode.
+     * 
+     * @name Phaser.GameObjects.Components.BlendMode#_blendMode
+     * @type {integer}
+     * @private
+     * @default 0
+     * @since 3.0.0
+     */
     _blendMode: BlendModes.NORMAL,
 
     /**
@@ -39,7 +48,7 @@ var BlendMode = {
      * are used.
      *
      * @name Phaser.GameObjects.Components.BlendMode#blendMode
-     * @type {(integer|string)}
+     * @type {(Phaser.BlendModes|string)}
      * @since 3.0.0
      */
     blendMode: {
@@ -89,7 +98,7 @@ var BlendMode = {
      * @method Phaser.GameObjects.Components.BlendMode#setBlendMode
      * @since 3.0.0
      *
-     * @param {(string|integer)} value - The BlendMode value. Either a string or a CONST.
+     * @param {(string|Phaser.BlendModes)} value - The BlendMode value. Either a string or a CONST.
      *
      * @return {Phaser.GameObjects.GameObject} This Game Object instance.
      */

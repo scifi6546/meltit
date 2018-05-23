@@ -10,8 +10,8 @@ var CONST = require('./const');
 var Extend = require('./utils/object/Extend');
 
 /**
-* @namespace Phaser
-*/
+ * @namespace Phaser
+ */
 
 var Phaser = {
 
@@ -25,7 +25,7 @@ var Phaser = {
     Data: require('./data'),
     Display: require('./display'),
     DOM: require('./dom'),
-    EventEmitter: require('./events/EventEmitter'),
+    Events: require('./events'),
     Game: require('./boot/Game'),
     GameObjects: require('./gameobjects'),
     Geom: require('./geom'),
@@ -33,6 +33,7 @@ var Phaser = {
     Loader: require('./loader'),
     Math: require('./math'),
     Physics: require('./physics'),
+    Plugins: require('./plugins'),
     Renderer: require('./renderer'),
     Scene: require('./scene/Scene'),
     Scenes: require('./scene'),
@@ -57,7 +58,7 @@ module.exports = Phaser;
 global.Phaser = Phaser;
 
 /*
- * "Documentation is like sex:  when it is good, it is very, very good;
+ * "Documentation is like pizza: when it is good, it is very, very good;
  * and when it is bad, it is better than nothing."
  *  -- Dick Brandon
  */

@@ -39,15 +39,6 @@ var Gamepad = new Class({
         /**
          * [description]
          *
-         * @name Phaser.Input.Gamepad.Gamepad#events
-         * @type {EventEmitter}
-         * @since 3.0.0
-         */
-        this.events = manager.events;
-
-        /**
-         * [description]
-         *
          * @name Phaser.Input.Gamepad.Gamepad#id
          * @type {string}
          * @since 3.0.0
@@ -87,7 +78,7 @@ var Gamepad = new Class({
          * [description]
          *
          * @name Phaser.Input.Gamepad.Gamepad#buttons
-         * @type {array}
+         * @type {Phaser.Input.Gamepad.Button[]}
          * @default []
          * @since 3.0.0
          */
@@ -97,7 +88,7 @@ var Gamepad = new Class({
          * [description]
          *
          * @name Phaser.Input.Gamepad.Gamepad#axes
-         * @type {array}
+         * @type {Phaser.Input.Gamepad.Axis[]}
          * @default []
          * @since 3.0.0
          */
@@ -143,8 +134,10 @@ var Gamepad = new Class({
             {
                 axes[i] = new Axis(this, i);
             }
-
-            axes[i].update(axisData);
+            else
+            {
+                axes[i].update(axisData);
+            }
         }
     }
 

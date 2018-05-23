@@ -15,7 +15,7 @@ var TWEEN_CONST = require('./tween/const');
  *
  * @class Timeline
  * @memberOf Phaser.Tweens
- * @extends EventEmitter
+ * @extends Phaser.Events.EventEmitter
  * @constructor
  * @since 3.0.0
  *
@@ -852,7 +852,7 @@ var Timeline = new Class({
     {
         for (var i = 0; i < this.data.length; i++)
         {
-            this.data[i].destroy();
+            this.data[i].stop();
         }
 
     }

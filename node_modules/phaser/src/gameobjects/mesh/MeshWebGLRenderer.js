@@ -15,19 +15,20 @@ var GameObject = require('../GameObject');
  * @since 3.0.0
  * @private
  *
- * @param {Phaser.Renderer.WebGLRenderer} renderer - A reference to the current active WebGL renderer.
+ * @param {Phaser.Renderer.WebGL.WebGLRenderer} renderer - A reference to the current active WebGL renderer.
  * @param {Phaser.GameObjects.Mesh} src - The Game Object being rendered in this call.
  * @param {number} interpolationPercentage - Reserved for future use and custom pipelines.
  * @param {Phaser.Cameras.Scene2D.Camera} camera - The Camera that is rendering the Game Object.
+ * @param {Phaser.GameObjects.Components.TransformMatrix} parentMatrix - This transform matrix is defined if the game object is nested
  */
-var MeshWebGLRenderer = function (renderer, src, interpolationPercentage, camera)
+var MeshWebGLRenderer = function (renderer, src, interpolationPercentage, camera, parentMatrix)
 {
     if (GameObject.RENDER_MASK !== src.renderFlags || (src.cameraFilter > 0 && (src.cameraFilter & camera._id)))
     {
         return;
     }
 
-    this.pipeline.batchMesh(src, camera);
+    this.pipeline.batchMesh(src, camera, parentMatrix);
 };
 
 module.exports = MeshWebGLRenderer;

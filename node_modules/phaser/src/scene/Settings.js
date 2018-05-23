@@ -6,34 +6,42 @@
 
 var CONST = require('./const');
 var GetValue = require('../utils/object/GetValue');
+var Merge = require('../utils/object/Merge');
 var InjectionMap = require('./InjectionMap');
 
-// TODO 22/03/2018 Fix "plugins" type
+/**
+ * @namespace Phaser.Scenes.Settings
+ */
 
 /**
- * @typedef {object} SettingsConfig
+ * @typedef {object} Phaser.Scenes.Settings.Config
  *
  * @property {string} [key] - [description]
  * @property {boolean} [active=false] - [description]
  * @property {boolean} [visible=true] - [description]
- * @property {(false|LoaderFileObject[])} [files=false] - [description]
+ * @property {(false|Phaser.Loader.FileTypes.PackFileConfig)} [pack=false] - [description]
  * @property {?(InputJSONCameraObject|InputJSONCameraObject[])} [cameras=null] - [description]
- * @property {Object.<string, string>} [map] - [description]
+ * @property {Object.<string, string>} [map] - Overwrites the default injection map for a scene.
+ * @property {Object.<string, string>} [mapAdd] - Extends the injection map for a scene.
  * @property {object} [physics={}] - [description]
  * @property {object} [loader={}] - [description]
  * @property {(false|*)} [plugins=false] - [description]
  */
 
 /**
- * @typedef {object} SettingsObject
+ * @typedef {object} Phaser.Scenes.Settings.Object
  *
  * @property {number} status - [description]
  * @property {string} key - [description]
  * @property {boolean} active - [description]
  * @property {boolean} visible - [description]
  * @property {boolean} isBooted - [description]
+ * @property {boolean} isTransition - [description]
+ * @property {?Phaser.Scene} transitionFrom - [description]
+ * @property {integer} transitionDuration - [description]
+ * @property {boolean} transitionAllowInput - [description]
  * @property {object} data - [description]
- * @property {(false|LoaderFileObject[])} files - [description]
+ * @property {(false|Phaser.Loader.FileTypes.PackFileConfig)} pack - [description]
  * @property {?(InputJSONCameraObject|InputJSONCameraObject[])} cameras - [description]
  * @property {Object.<string, string>} map - [description]
  * @property {object} physics - [description]
@@ -49,9 +57,9 @@ var Settings = {
      * @function Phaser.Scenes.Settings.create
      * @since 3.0.0
      *
-     * @param {(string|SettingsConfig)} config - [description]
+     * @param {(string|Phaser.Scenes.Settings.Config)} config - [description]
      *
-     * @return {SettingsObject} [description]
+     * @return {Phaser.Scenes.Settings.Object} [description]
      */
     create: function (config)
     {
@@ -75,11 +83,16 @@ var Settings = {
 
             isBooted: false,
 
+            isTransition: false,
+            transitionFrom: null,
+            transitionDuration: 0,
+            transitionAllowInput: true,
+
             //  Loader payload array
 
             data: {},
 
-            files: GetValue(config, 'files', false),
+            pack: GetValue(config, 'pack', false),
 
             //  Cameras
 
@@ -87,7 +100,7 @@ var Settings = {
 
             //  Scene Property Injection Map
 
-            map: GetValue(config, 'map', InjectionMap),
+            map: GetValue(config, 'map', Merge(InjectionMap, GetValue(config, 'mapAdd', {}))),
 
             //  Physics
 

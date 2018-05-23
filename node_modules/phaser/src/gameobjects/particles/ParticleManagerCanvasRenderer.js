@@ -15,18 +15,28 @@ var GameObject = require('../GameObject');
  * @since 3.0.0
  * @private
  *
- * @param {Phaser.Renderer.CanvasRenderer} renderer - A reference to the current active Canvas renderer.
- * @param {Phaser.GameObjects.Particles} emitterManager - The Game Object being rendered in this call.
+ * @param {Phaser.Renderer.Canvas.CanvasRenderer} renderer - A reference to the current active Canvas renderer.
+ * @param {Phaser.GameObjects.Particles.ParticleEmitterManager} emitterManager - The Game Object being rendered in this call.
  * @param {number} interpolationPercentage - Reserved for future use and custom pipelines.
  * @param {Phaser.Cameras.Scene2D.Camera} camera - The Camera that is rendering the Game Object.
+ * @param {Phaser.GameObjects.Components.TransformMatrix} parentMatrix - This transform matrix is defined if the game object is nested
  */
-var ParticleManagerCanvasRenderer = function (renderer, emitterManager, interpolationPercentage, camera)
+var ParticleManagerCanvasRenderer = function (renderer, emitterManager, interpolationPercentage, camera, parentMatrix)
 {
     var emitters = emitterManager.emitters.list;
 
     if (emitters.length === 0 || GameObject.RENDER_MASK !== emitterManager.renderFlags || (emitterManager.cameraFilter > 0 && (emitterManager.cameraFilter & camera._id)))
     {
         return;
+    }
+
+    var ctx = renderer.currentContext;
+
+    ctx.save();
+    if (parentMatrix !== undefined)
+    {
+        var matrix = parentMatrix.matrix;
+        ctx.transform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
     }
 
     for (var i = 0; i < emitters.length; i++)
@@ -41,7 +51,6 @@ var ParticleManagerCanvasRenderer = function (renderer, emitterManager, interpol
             continue;
         }
 
-        var ctx = renderer.currentContext;
 
         var lastAlpha = ctx.globalAlpha;
         var cameraScrollX = camera.scrollX * emitter.scrollFactorX;
@@ -76,8 +85,8 @@ var ParticleManagerCanvasRenderer = function (renderer, emitterManager, interpol
             var x = -ox;
             var y = -oy;
 
-            var tx = particle.x - cameraScrollX * particle.scrollFactorX;
-            var ty = particle.y - cameraScrollY * particle.scrollFactorY;
+            var tx = particle.x - cameraScrollX;
+            var ty = particle.y - cameraScrollY;
 
             if (roundPixels)
             {
@@ -102,6 +111,8 @@ var ParticleManagerCanvasRenderer = function (renderer, emitterManager, interpol
 
         ctx.globalAlpha = lastAlpha;
     }
+
+    ctx.restore();
 };
 
 module.exports = ParticleManagerCanvasRenderer;

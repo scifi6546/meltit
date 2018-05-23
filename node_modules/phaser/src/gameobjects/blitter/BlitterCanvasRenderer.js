@@ -15,12 +15,13 @@ var GameObject = require('../GameObject');
  * @since 3.0.0
  * @private
  *
- * @param {Phaser.Renderer.CanvasRenderer} renderer - A reference to the current active Canvas renderer.
+ * @param {Phaser.Renderer.Canvas.CanvasRenderer} renderer - A reference to the current active Canvas renderer.
  * @param {Phaser.GameObjects.Blitter} src - The Game Object being rendered in this call.
  * @param {number} interpolationPercentage - Reserved for future use and custom pipelines.
  * @param {Phaser.Cameras.Scene2D.Camera} camera - The Camera that is rendering the Game Object.
+ * @param {Phaser.GameObjects.Components.TransformMatrix} parentMatrix - This transform matrix is defined if the game object is nested
  */
-var BlitterCanvasRenderer = function (renderer, src, interpolationPercentage, camera)
+var BlitterCanvasRenderer = function (renderer, src, interpolationPercentage, camera, parentMatrix)
 {
     if (GameObject.RENDER_MASK !== src.renderFlags || (src.cameraFilter > 0 && (src.cameraFilter & camera._id)))
     {
@@ -34,6 +35,14 @@ var BlitterCanvasRenderer = function (renderer, src, interpolationPercentage, ca
     var ctx = renderer.gameContext;
     var cameraScrollX = src.x - camera.scrollX * src.scrollFactorX;
     var cameraScrollY = src.y - camera.scrollY * src.scrollFactorY;
+
+    ctx.save();
+
+    if (parentMatrix !== undefined)
+    {
+        var matrix = parentMatrix.matrix;
+        ctx.transform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
+    }
 
     //  Render bobs
     for (var i = 0; i < list.length; i++)
@@ -72,6 +81,8 @@ var BlitterCanvasRenderer = function (renderer, src, interpolationPercentage, ca
             ctx.restore();
         }
     }
+    
+    ctx.restore();
 };
 
 module.exports = BlitterCanvasRenderer;

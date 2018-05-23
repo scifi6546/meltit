@@ -37,10 +37,10 @@ var Button = new Class({
          * [description]
          *
          * @name Phaser.Input.Gamepad.Button#events
-         * @type {EventEmitter}
+         * @type {Phaser.Events.EventEmitter}
          * @since 3.0.0
          */
-        this.events = pad.events;
+        this.events = pad.manager;
 
         /**
          * [description]
