@@ -1,1 +1,2 @@
-docker build -t game .
+tsc -p tsconfig.jason
+docker build -t game

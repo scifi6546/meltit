@@ -1426,12 +1426,14 @@ var Body = new Class({
      * @method Phaser.Physics.Arcade.Body#setCollideWorldBounds
      * @since 3.0.0
      *
-     * @param {boolean} value - True (collisions) or false (no collisions).
+     * @param {boolean} [value=true] - True (collisions) or false (no collisions).
      *
      * @return {Phaser.Physics.Arcade.Body} This Body object.
      */
     setCollideWorldBounds: function (value)
     {
+        if (value === undefined) { value = true; }
+
         this.collideWorldBounds = value;
 
         return this;
@@ -1589,6 +1591,66 @@ var Body = new Class({
     setAccelerationY: function (value)
     {
         this.acceleration.y = value;
+
+        return this;
+    },
+
+    /**
+     * Enables or disables drag.
+     *
+     * @method Phaser.Physics.Arcade.Body#setAllowDrag
+     * @since 3.9.0
+     * @see Phaser.Physics.Arcade.Body#allowDrag
+     *
+     * @param {boolean} [value=true] - `true` to allow drag on this body, or `false` to disable it.
+     *
+     * @return {Phaser.Physics.Arcade.Body} This Body object.
+     */
+    setAllowDrag: function (value)
+    {
+        if (value === undefined) { value = true; }
+
+        this.allowDrag = value;
+
+        return this;
+    },
+
+    /**
+     * Enables or disables gravity's effect on this Body.
+     *
+     * @method Phaser.Physics.Arcade.Body#setAllowGravity
+     * @since 3.9.0
+     * @see Phaser.Physics.Arcade.Body#allowGravity
+     *
+     * @param {boolean} [value=true] - `true` to allow gravity on this body, or `false` to disable it.
+     *
+     * @return {Phaser.Physics.Arcade.Body} This Body object.
+     */
+    setAllowGravity: function (value)
+    {
+        if (value === undefined) { value = true; }
+
+        this.allowGravity = value;
+
+        return this;
+    },
+
+    /**
+     * Enables or disables rotation.
+     *
+     * @method Phaser.Physics.Arcade.Body#setAllowRotation
+     * @since 3.9.0
+     * @see Phaser.Physics.Arcade.Body#allowRotation
+     *
+     * @param {boolean} [value=true] - `true` to allow rotation on this body, or `false` to disable it.
+     *
+     * @return {Phaser.Physics.Arcade.Body} This Body object.
+     */
+    setAllowRotation: function (value)
+    {
+        if (value === undefined) { value = true; }
+
+        this.allowRotation = value;
 
         return this;
     },
@@ -1823,12 +1885,14 @@ var Body = new Class({
      * @method Phaser.Physics.Arcade.Body#setImmovable
      * @since 3.0.0
      *
-     * @param {boolean} value - The value to assign to `immovable`.
+     * @param {boolean} [value=true] - The value to assign to `immovable`.
      *
      * @return {Phaser.Physics.Arcade.Body} This Body object.
      */
     setImmovable: function (value)
     {
+        if (value === undefined) { value = true; }
+
         this.immovable = value;
 
         return this;
